@@ -1,0 +1,145 @@
+# ThirstDotFun Protocol
+
+This is a starter repo structure for your live-stream + bonding curve token platform.
+
+```
+thirstdotfun-protocol/
+├── contracts/             # Anchor smart contracts
+│   ├── Cargo.toml
+│   └── programs/
+│       └── thirstdotfun/
+│           ├── Cargo.toml
+│           └── src/
+│               └── lib.rs    # Anchor contract skeleton
+│
+├── frontend/              # Next.js frontend
+│   ├── package.json
+│   ├── next.config.js
+│   └── pages/
+│       └── index.tsx        # Wallet connect + Buy button
+│
+├── backend/               # Off-chain bots + workers
+│   ├── package.json
+│   └── index.ts            # Liquidity bot skeleton
+│
+├── docs/                  # Documentation + planning
+│   ├── architecture.md     # High-level architecture + notes
+│   └── roadmap.md          # Milestones + tasks
+│
+└── README.md
+```
+
+---
+
+### Example Files
+
+#### `contracts/programs/thirstdotfun/src/lib.rs`
+```rust
+use anchor_lang::prelude::*;
+
+declare_id!("F11111111111111111111111111111111111111111111111111111111");
+
+#[program]
+pub mod thirstdotfun {
+    use super::*;
+
+    pub fn create_pool(ctx: Context<CreatePool>, _params: CurveParams) -> Result<()> {
+        // initialize bonding curve pool
+        Ok(())
+    }
+
+    pub fn buy(ctx: Context<Buy>, amount_in: u64) -> Result<()> {
+        // calculate tokens minted from bonding curve
+        // mint SPL tokens to buyer
+        Ok(())
+    }
+
+    pub fn sell(ctx: Context<Sell>, tokens_burned: u64) -> Result<()> {
+        // burn tokens, return SOL/USDC to user
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct CreatePool<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct Buy<'info> {
+    #[account(mut)]
+    pub buyer: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct Sell<'info> {
+    #[account(mut)]
+    pub seller: Signer<'info>,
+}
+
+#[account]
+pub struct CurveParams {
+    pub a: u64,
+    pub b: u64,
+}
+```
+
+#### `frontend/pages/index.tsx`
+```tsx
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
+export default function Home() {
+  const { publicKey } = useWallet();
+
+  const handleBuy = async () => {
+    if (!publicKey) return;
+    alert("Buy function triggered. Hook this to contract.");
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>ThirstDotFun</h1>
+      <WalletMultiButton />
+      {publicKey && <button onClick={handleBuy}>Buy Tokens</button>}
+    </div>
+  );
+}
+```
+
+#### `backend/index.ts`
+```ts
+console.log("Liquidity bot starting...");
+
+// Watch contract events from Solana RPC (Helius/Triton)
+// When threshold reached, send tx to Raydium to create pool.
+```
+
+#### `docs/architecture.md`
+```md
+# ThirstDotFun Architecture
+
+- **Contracts:** Anchor program controlling bonding curve + SPL mint.
+- **Frontend:** Next.js app with wallet connect + buy/sell UI.
+- **Backend:** Bot to monitor contract + auto-add liquidity to Raydium.
+- **Streaming Overlay:** React component that listens to contract events and shows them live in OBS/Livepeer.
+```
+
+#### `README.md`
+```md
+# ThirstDotFun Protocol
+
+Live streaming + bonding curve tokens on Solana.
+
+## Structure
+- `contracts/`: Anchor program
+- `frontend/`: Next.js UI
+- `backend/`: Off-chain bot
+- `docs/`: Documentation
+
+## Getting Started
+1. Install Anchor + Solana CLI
+2. `cd contracts && anchor build`
+3. `cd frontend && npm install && npm run dev`
+4. `cd backend && npm install && node index.js`
